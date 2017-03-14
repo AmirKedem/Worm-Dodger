@@ -19,7 +19,7 @@ function Particle(x, y) {
 	}
 	
 	this.checkCrash = function(Obsticle) {
-		for (var i=0, i < Obsticle.length, i++) {
+		for (var i=0; i < Obsticle.length; i++) {
 			if (Obsticle[i].dir >= 2) {
 				// obs dir is up or down
 			} else {
