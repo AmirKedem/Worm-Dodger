@@ -2,6 +2,7 @@ var ship;
 var obs = [];
 var onoff = false;
 var tempo = 150;
+var lives = 5;
 
 function setup() {
   createCanvas(innerHeight, innerHeight);
@@ -12,7 +13,6 @@ function setup() {
 
 function draw() {
   background(51);
-		
   // Attractor
   //attractor = createVector(mouseX, mouseY);
 	// var switch = false;
@@ -36,28 +36,28 @@ function draw() {
 			// pos is 1 frame left to the screen. vel is to the right.
 			case 0:
 				if (obs[i].pos.x > width) {
-					obs.shift(i);
+					obs.splice(i, 1);
 					i--;
 				}
 				break;
 			// pos is 1 frame right to the screen. vel is to the left.
 			case 1:	
 				if (obs[i].pos.x < -2) {
-					obs.shift(i);
+					obs.splice(i, 1);
 					i--;
 				}
 				break;
 			// pos is 1 frame down to the screen. vel is to the up.	
 			case 2:	
 				if (obs[i].pos.y < -2) {
-					obs.shift(i);
+					obs.splice(i, 1);
 					i--;
 				}
 				break;
 			// pos is 1 frame up to the screen. vel is to the down.	
 			case 3:	
 				if (obs[i].pos.y > height) {
-					obs.shift(i);
+					obs.splice(i, 1);
 					i--;
 				}
 				break;
@@ -72,10 +72,13 @@ function draw() {
 	// ship	
   ship.attracted(attractor);   
   ship.update();
-	ship.checkCrash(obs);
-	if (ship.checkCrash) {
-		//need to do reset fn.
-		//reset();
+	if (ship.checkCrash(obs)) {
+		if (lives > 0) {
+			lives--;
+			console.log(lives);
+		} else {
+			reset();
+		}
 	}
   ship.show();
 }

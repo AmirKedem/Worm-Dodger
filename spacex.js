@@ -21,9 +21,21 @@ function Particle(x, y) {
 	this.checkCrash = function(Obsticle) {
 		for (var i=0; i < Obsticle.length; i++) {
 			if (Obsticle[i].dir >= 2) {
-				// obs dir is up or down
+				// obs dir is up or down.
+				if((this.pos.x <= Obsticle[i].xrange ||
+					 this.pos.x >= Obsticle[i].rect2posx)&&
+					this.pos.y >= Obsticle[i].pos.y &&
+					this.pos.y <= Obsticle[i].pos.y + 10) {
+					return true;
+				}
 			} else {
-				// obs dir is right or left
+				// obs dir is right or left.
+				if((this.pos.y <= Obsticle[i].yrange ||
+					 this.pos.y >= Obsticle[i].rect2posy)&&
+					this.pos.x >= Obsticle[i].pos.x &&
+					this.pos.x <= Obsticle[i].pos.x + 10) {
+					return true;
+				}
 			}
 		}
 	}
