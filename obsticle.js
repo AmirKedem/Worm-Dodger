@@ -26,8 +26,23 @@
 	// def the distance between the two rects.
 	this.d = 100
 	// some random color.
-	this.color = 254/2;
-	if (dir == 2 || dir == 3) {
+	this.rand = random(1);
+	if(this.rand > 0.5) {
+		this.color1 = 128;
+		this.color2 = 255;
+		this.colFill1 = 10
+		this.colFill2 = 128;
+		this.colFill3 = 50;
+	} else {
+		this.color1 = 255;
+		this.color2 = 0;
+		this.colFill1 = 128
+		this.colFill2 = 10;
+		this.colFill3 = 50;
+	}
+	
+	// if dir is up or down. 
+	if (dir >= 2) {
 		// calculates the width of the rect.
 		this.xrange = random(0 , width-this.d);
 		this.yrange = 10;
@@ -49,8 +64,8 @@
 	}
 	
   this.show = function() { 
-		fill(this.color, 255,this.color ,135);
-		stroke(this.color + 20, 255 ,this.color + 20);
+		fill(this.colFill1,this.colFill2,this.colFill3,135);
+		stroke(this.color1, this.color2 ,this.color1 - 60);
 		strokeWeight(4);
 		if (dir >= 2) {
 			this.rect2posx = this.xrange + this.d;

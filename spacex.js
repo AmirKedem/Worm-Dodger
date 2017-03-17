@@ -1,4 +1,4 @@
-function Particle(x, y) {
+function Player(x, y) {
   this.pos = createVector(x, y);
   this.vel = createVector(); 
   this.acc = createVector();
@@ -13,7 +13,7 @@ function Particle(x, y) {
 		this.pos.x = constrain(this.pos.x, this.rad, width - this.rad);
     this.pos.y = constrain(this.pos.y, this.rad, height - this.rad);
 		this.history.push(createVector(this.pos.x, this.pos.y));
-		if (this.history.length > 50) {
+		if (this.history.length > 45) {
 			this.history.shift();
 		}
 	}

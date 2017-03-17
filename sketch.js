@@ -1,34 +1,36 @@
-var ship;
+var worm;
 var obs = [];
 var onoff = false;
 var tempo = 150;
+var start = Math.round(new Date() / 10);
 var lives = 5;
+var score = 0;
 
 function setup() {
   createCanvas(innerHeight, innerHeight);
-  ship = new Particle(random(width), random(height)); 
+  worm = new Player(random(width/4,width*0.75), random(height/4,height*0.75)); 
 	obs.push(new Obsticle(floor(random(4))));	
   var attractor = createVector(width/2, height/2);  
+	var now = Math.round(new Date() / 10);
 }
 
 function draw() {
-  background(51);
+  background(50);
+	now = Math.round(new Date() / 10);
+	score = now - start;
+	console.log(score/100);
+	
   // Attractor
-  //attractor = createVector(mouseX, mouseY);
-	// var switch = false;
+  attractor = createVector(mouseX, mouseY);
+	var onoff = false;
 	if (mouseIsPressed || onoff == true) {
 		attractor = createVector(mouseX, mouseY);
 		onoff = true;	
 	} else {
 		attractor = createVector(width/2, height/2);
 	}
-  stroke(255);
-  strokeWeight(8);
-  stroke(0, 255, 0);
-  point(attractor.x, attractor.y);
 	
 	// obsticles	
-	
 	for(var i=0; i < obs.length; i++) {
 		obs[i].update();
 		obs[i].show();
@@ -63,22 +65,31 @@ function draw() {
 				break;
 		} 	
 	}		
-	
+	// The rate of the obs.
 	//tempo = floor(random(250,300));
 	if (frameCount % tempo == 0) {
 		obs.push(new Obsticle(floor(random(4))));
 	}		
 	
-	// ship	
-  ship.attracted(attractor);   
-  ship.update();
-	if (ship.checkCrash(obs)) {
-		if (lives > 0) {
+	// Attractor
+	// Draws the attractor.	
+  strokeWeight(9);
+  stroke(0, 25 , 255);
+  point(attractor.x, attractor.y);
+	strokeWeight(4);
+  stroke(250);
+	point(attractor.x, attractor.y);
+	
+	// worm
+  worm.attracted(attractor);   
+  worm.update();
+	if (worm.checkCrash(obs)) {
+		if (lives > 1) {
 			lives--;
 			console.log(lives);
 		} else {
 			reset();
 		}
 	}
-  ship.show();
+  worm.show();
 }
