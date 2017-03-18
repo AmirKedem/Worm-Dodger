@@ -1,0 +1,32 @@
+body {padding: 0; margin: 0;overflow: hidden;}
+
+p {
+	padding: 0;
+	margin: 0;
+	position: absolute;
+	bottom: 0px;
+	font-size: 40px;
+  font-family: Impact;
+  display: block;
+  color: white;
+  -webkit-text-stroke: 3px rgb(50, 50, 50);
+  text-shadow:
+     4px 4px 0 #000,
+    -1px-1px 0 #000,  
+     1px-1px 0 #000,
+    -1px 1px 0 #000,
+		 1px 1px 0 #000;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+.score {
+	left: 146px;
+}
+
+.best {
+	left: 4px;
+}
