@@ -28,17 +28,21 @@
 	// some random color.
 	this.rand = random(1);
 	if(this.rand > 0.5) {
+		// green
 		this.color1 = 128;
 		this.color2 = 255;
+		this.color3 = 78
 		this.colFill1 = 10
 		this.colFill2 = 128;
 		this.colFill3 = 50;
 	} else {
+		// orange
 		this.color1 = 255;
-		this.color2 = 0;
-		this.colFill1 = 128
-		this.colFill2 = 10;
-		this.colFill3 = 50;
+		this.color2 = 89;
+		this.color3 = 0;
+		this.colFill1 = 235;
+		this.colFill2 = 79;
+		this.colFill3 = 0;
 	}
 	
 	// if dir is up or down. 
@@ -65,7 +69,7 @@
 	
   this.show = function() { 
 		fill(this.colFill1,this.colFill2,this.colFill3,135);
-		stroke(this.color1, this.color2 ,this.color1 - 60);
+		stroke(this.color1, this.color2 ,this.color3);
 		strokeWeight(4);
 		if (dir >= 2) {
 			this.rect2posx = this.xrange + this.d;
