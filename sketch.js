@@ -32,12 +32,12 @@ bestTime = getCookie('bestTime');
 // coolies end.
 
 // hearts start.
-var shiftx = 1782;
-var shifty1 = 970;
-var shifty2 = 920;
-var shifty3 = 870;
-var shifty4 = 820;
-var shifty5 = 770;
+var shiftx = screen.availWidth - 70;
+var shifty1 = innerHeight - 30;
+var shifty2 = shifty1 - 50;
+var shifty3 = shifty2 - 50;
+var shifty4 = shifty3 - 50;
+var shifty5 = shifty4 - 50;
 
 var rad = 30;
 
@@ -150,7 +150,7 @@ var	shield = 5 * 60
 var shieldActivator= false;
 
 function setup() {
-  createCanvas(1858, 1014);
+  createCanvas(screen.availWidth, window.innerHeight);
 	scoreP = createP();
 	bestP = createP();
 	scoreP.html("Score: 0");
@@ -303,4 +303,8 @@ function keyPressed() {
 		anotherfps3 = frameCount + (20 * 60);
 		shieldActivator = true;
 	}
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
