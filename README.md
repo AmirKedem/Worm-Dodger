@@ -1,6 +1,6 @@
-# SpaceX
-Simple cool Game
-
+# Worm Dodger
+Simple and cool Game
+that has been developed with p5.js library.
 
 If you would like to play it cilck here
 
