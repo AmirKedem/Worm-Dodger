@@ -6,13 +6,11 @@ let worm;
 let attractor;
 let now;
 let obsticles = [];
-let trackMouse = false;
+let shieldBar;
+let isGameStarted = false;
 let tempo = 160;
-let anotherfps1 = 0;
-let anotherfps2 = 0;
-let anotherfps3 = 0;
-let start = Math.round(new Date() / 10);
-let time = 0;
+let startScoreTimer;
+let scoreTimer = 0;
 let scoreP;
 let bestP;
 const LIVES_AMOUNT = 3;
@@ -22,6 +20,18 @@ let SHIELD_ACTIVE_TIME = 5 * FPS;
 let SHIELD_COOLDOWN = 20 * FPS;
 let shieldActivator = false;
 
+let startShieldFrameCount = -1;
+let startShieldCoolDownFrameCount = -1;
+
+let fcCrashDeactivateBypass = 0;
+let fcShieldDeactivate = SHIELD_COOLDOWN;
+let fcCanUseShield = 0;
+
+/*
+One time setup.
+Init objects once and call reset to init all the 
+dynamic variables.
+*/
 function setup() {
   createCanvas(innerWidth, innerHeight);
   noCursor();
@@ -29,28 +39,38 @@ function setup() {
   bestP = createP();
   scoreP.html("Score: 0");
   bestP.html("Best: 0");
-  worm = new Player(
+  
+  shieldBar = new ShieldBar();
+  attractor = createVector(width / 2, height / 2);
+
+  reset();
+}
+
+/*
+Reset the game variables.
+Every new game this function should be called.
+*/
+function reset() {
+  worm = new Worm(
     random(width / 4, width * 0.75),
     random(height / 4, height * 0.75)
   );
-  obsticles.push(new Obsticle(floor(random(4))));
-
-  attractor = createVector(width / 2, height / 2);
-  now = Math.round(new Date() / 10);
-}
-
-function reset() {
-  worm.history = [];
-  worm.pos.x = random(width / 4, width * 0.75);
-  worm.pos.y = random(height / 4, height * 0.75);
   obsticles = [];
-  anotherfps1 = 0;
-  anotherfps2 = 0;
-  anotherfps3 = 0;
+  fcCrashDeactivateBypass = 0;
+  fcShieldDeactivate = 0;
+  fcCanUseShield = 0;
+
+  startShieldFrameCount = -1;
+  startShieldCoolDownFrameCount = -1;
+
+  fcCrashDeactivateBypass = 0;
+  fcShieldDeactivate = SHIELD_COOLDOWN;
+  fcCanUseShield = 0;
+
   shieldActivator = false;
   lives = LIVES_AMOUNT;
-  time = 0;
-  start = Math.round(new Date() / 10);
+  scoreTimer = 0;
+  startScoreTimer = Math.round(new Date() / 10);
 }
 
 
@@ -59,21 +79,28 @@ function draw() {
   DrawHearts();
   // Score
   now = Math.round(new Date() / 10);
-  time = (now - start) / 100;
-  bestTime = Math.max(bestTime, time);
+  scoreTimer = (now - startScoreTimer) / 100;
+  bestTime = Math.max(bestTime, scoreTimer);
   setCookie("bestTime", bestTime, 365);
-  scoreP.html("<p class = score> Score: " + time + "</p>");
+  scoreP.html("<p class = score> Score: " + scoreTimer + "</p>");
   bestP.html("<p class = best> Best: " + bestTime + "</p>");
+ 
+  if (shieldActivator) {
+    shieldBar.update(fcShieldDeactivate, startShieldFrameCount, frameCount);
+  } else {
+    shieldBar.update(startShieldCoolDownFrameCount, fcCanUseShield, frameCount);
+  }
+  shieldBar.show();
 
   // Attractor
-  if (mouseIsPressed || trackMouse == true) {
+  if (mouseIsPressed || isGameStarted == true) {
     // The rate of the obsticles.
     //tempo = floor(random(250,300));
     if (frameCount % tempo == 0) {
-      obsticles.push(new Obsticle(floor(random(4))));
+      obsticles.push(new Obsticle(floor(random(4)), 100));
     }
     attractor = createVector(mouseX, mouseY);
-    trackMouse = true;
+    isGameStarted = true;
   } else {
     attractor = createVector(width / 2, height / 2);
   }
@@ -88,27 +115,33 @@ function draw() {
     }
   }
 
-  // Draws the attractor.
+  renderMouseAttractor();
+
+  worm.attracted(attractor);
+  worm.update();
+
+  if (shieldActivator) {
+    worm.shield();
+  } else {
+    CheckCollisions();
+  }
+
+  if (frameCount >= fcShieldDeactivate && shieldActivator) {
+    startShieldCoolDownFrameCount = frameCount;
+    fcCanUseShield = frameCount + SHIELD_COOLDOWN;
+    shieldActivator = false;
+  } 
+
+  worm.show();
+}
+
+function renderMouseAttractor() {
   strokeWeight(10);
   stroke(0, 25, 255);
   point(attractor.x, attractor.y);
   strokeWeight(6);
   stroke(250);
   point(attractor.x, attractor.y);
-
-  worm.attracted(attractor);
-  worm.update();
-
-  // releases obsticles over time.
-  if (frameCount >= anotherfps2) {
-    shieldActivator = false;
-  } else {
-    worm.shield();
-  }
-  if (!shieldActivator) {
-    CheckCollisions();
-  }
-  worm.show();
 }
 
 function DrawHearts() {
@@ -122,11 +155,15 @@ function DrawHearts() {
 }
 
 function CheckCollisions() {
+  if (frameCount < fcCrashDeactivateBypass) {
+    return;
+  }
+
   for (let i = obsticles.length - 1; i >= 0; i--) {
-    if (worm.checkCrash(obsticles[i]) && frameCount >= anotherfps1) {
+    if (worm.checkCrash(obsticles[i])) {
       lives--;
       if (lives > 0) {
-        anotherfps1 = frameCount + 10;
+        fcCrashDeactivateBypass = frameCount + 10;
         obsticles.splice(i, 1);
       } else {
         reset();
@@ -139,9 +176,9 @@ function CheckCollisions() {
 }
 
 function keyPressed() {
-  if (keyCode === SPACE_KEYCODE && frameCount >= anotherfps3) {
-    anotherfps2 = frameCount + SHIELD_ACTIVE_TIME;
-    anotherfps3 = frameCount + SHIELD_COOLDOWN;
+  if (keyCode === SPACE_KEYCODE && frameCount >= fcCanUseShield) {
+    startShieldFrameCount = frameCount;
+    fcShieldDeactivate = frameCount + SHIELD_ACTIVE_TIME;
     shieldActivator = true;
   }
 }

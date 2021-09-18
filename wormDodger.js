@@ -1,4 +1,4 @@
-class Player {
+class Worm {
 	constructor(x, y) {
 		this.pos = createVector(x, y);
 		this.vel = createVector();
