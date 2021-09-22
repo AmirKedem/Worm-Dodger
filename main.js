@@ -176,7 +176,7 @@ function CheckCollisions() {
 }
 
 function keyPressed() {
-  if (keyCode === SPACE_KEYCODE && frameCount >= fcCanUseShield) {
+  if (keyCode === SPACE_KEYCODE && !shieldActivator && frameCount >= fcCanUseShield) {
     startShieldFrameCount = frameCount;
     fcShieldDeactivate = frameCount + SHIELD_ACTIVE_TIME;
     shieldActivator = true;
